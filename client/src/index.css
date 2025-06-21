@@ -1,0 +1,50 @@
+/* src/index.css */
+@import "tailwindcss";
+@import "flowbite";
+
+/* Light Theme (default) */
+:root {
+  --color-text-primary: 0 0% 10%;       /* Dark text */
+  --color-bg-primary: 0 0% 100%;        /* White background */
+  --color-placeholder: 0 0% 50%;        /* Medium gray placeholder */
+  --color-input-bg: 0 0% 100%;          /* White input background */
+}
+
+/* Dark Theme */
+html.dark {
+  --color-text-primary: 0 0% 100%;      /* White text */
+  --color-bg-primary: 220 20% 10%;      /* Very dark bluish-gray */
+  --color-placeholder: 0 0% 80%;        /* Light gray placeholder */
+  --color-input-bg: 220 20% 10%;        /* Match background (dark) */
+}
+
+/* Utility classes */
+.text-primary {
+  color: hsl(var(--color-text-primary)) !important;
+}
+
+.bg-primary {
+  background-color: hsl(var(--color-bg-primary));
+}
+
+/* Placeholder styling */
+::placeholder {
+  color: hsl(var(--color-placeholder));
+  opacity: 1;
+}
+
+/* Optional: global input background & text color */
+input,
+textarea,
+select {
+  background-color: hsl(var(--color-input-bg));
+  color: hsl(var(--color-text-primary));
+}
+
+/* Smooth transition */
+.transition-colors {
+  transition-property: background-color, color;
+  transition-duration: 300ms;
+}
+
+
