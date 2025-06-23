@@ -8,7 +8,7 @@ import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 export default function DashProfile() {
   const dispatch = useDispatch();
-  const { currentUser, error } = useSelector((state: any) => state.user);
+  const { currentUser } = useSelector((state: any) => state.user);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageFileUrl, setImageFileUrl] = useState<string | null>(null);
@@ -192,11 +192,7 @@ export default function DashProfile() {
       </Alert>
     )}
 
-     {error === "failure" && message && (
-      <Alert className="mt-5" color="failure">
-        {error}
-      </Alert>
-    )}
+    
 
       <Modal
       show={showModel}
