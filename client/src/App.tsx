@@ -8,6 +8,9 @@ import Dashboard from "./pages/Dashboard";
 import Header from "./components/Header";
 import Footer  from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
+import AdminPrivateRoute from "./components/AdminPrivateRoute";
+import CreatePost from "./pages/CreatePost";
+import NotFound from "./pages/notFound";
 
 
 export default function App() {
@@ -21,9 +24,15 @@ export default function App() {
         <Route path="/signup" element={<Signup/>} />
         <Route path="/signin" element={<Signin/>} />
         <Route path="/projects" element={<Projects/>} />
+        <Route path="/notFound" element={<NotFound />} />
         <Route element={<PrivateRoute />}>
         <Route path="/dashboard" element={<Dashboard/>} />
         </Route>
+
+        <Route element={<AdminPrivateRoute />}>
+          <Route path="/create-post" element={<CreatePost />} />
+        </Route>
+
       </Routes>
       <Footer/>
     </BrowserRouter>

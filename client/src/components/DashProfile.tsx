@@ -5,10 +5,11 @@ import { updateStart, updateSuccess, updateFailure,deleteUserStart,deleteUserSuc
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 export default function DashProfile() {
   const dispatch = useDispatch();
-  const { currentUser } = useSelector((state: any) => state.user);
+  const { currentUser, loading } = useSelector((state: any) => state.user);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageFileUrl, setImageFileUrl] = useState<string | null>(null);
@@ -170,9 +171,25 @@ export default function DashProfile() {
 
         <Button
           type="submit"
-          className="bg-gradient-to-br from-purple-600 to-blue-500 text-white hover:bg-gradient-to-bl focus:ring-blue-300 dark:focus:ring-blue-800">
-          Update
+          className="bg-gradient-to-br from-purple-600 to-blue-500 text-white hover:bg-gradient-to-bl focus:ring-blue-300 dark:focus:ring-blue-800"
+          outline disabled={loading}>
+          {loading ? 'Loading...' : 'Update'}
         </Button>
+
+        {
+          currentUser.isAdmin && (
+            <Link to={"/create-post"}>
+            <Button
+            type='button'
+            className="bg-pink-600 text-white hover:bg-pink-700 dark:bg-pink-500 dark:hover:bg-pink-600 transition rounded-md px-4 py-2 w-full">
+              Create a post
+            </Button>
+            </Link>
+            
+          )
+        }
+
+
 
         <button
           type="button"
