@@ -106,7 +106,7 @@ const handleUploadImage = async () => {
             type='button'
             onClick={handleUploadImage}
             disabled={!!imageUploadProgress}
-            className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'
+            className='bg-blue-600 text-white px-2 py-6 rounded-md hover:bg-blue-700'
           >
             {imageUploadProgress ? 'Uploading...' : 'Upload Image'}
           </Button>
