@@ -1,12 +1,14 @@
-import { Alert, Button, Select, TextInput } from 'flowbite-react';
+import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileUploaderRegular } from '@uploadcare/react-uploader';
-import '@uploadcare/react-uploader/core.css';
+import axios from 'axios';
 
 export default function CreatePost() {
+  const [file, setFile] = useState<File | null>(null);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState<number | null>(null);
   const [formData, setFormData] = useState<{
     title?: string;
     category?: string;
@@ -16,30 +18,59 @@ export default function CreatePost() {
   const [publishError, setPublishError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-     try {
-      const res = await fetch('/api/post/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setPublishError(data.message);
-        return;
-      }
+const handleUploadImage = async () => {
+  if (!file) {
+    setImageUploadError('Please select an image');
+    return;
+  }
 
-      if (res.ok) {
-        setPublishError(null);
-        navigate(`/post/${data.slug}`);
-      }
-    } catch (error) {
+  setImageUploadError(null);
+  const form = new FormData();
+  form.append('file', file);
+  form.append('UPLOADCARE_STORE', '1');
+  form.append('UPLOADCARE_PUB_KEY', '475b04ee15f27e13bd4b');
+
+  try {
+    setImageUploadProgress(1);
+    const res = await fetch('https://upload.uploadcare.com/base/', {
+      method: 'POST',
+      body: form,
+    });
+
+    const data = await res.json();
+    if (data && data.file) {
+      const imageUrl = `https://ucarecdn.com/${data.file}/`;
+      setFormData({ ...formData, image: imageUrl });
+      setImageUploadProgress(null);
+    } else {
+      setImageUploadError('Upload failed');
+      setImageUploadProgress(null);
+    }
+  } catch (error) {
+    console.error(error);
+    setImageUploadError('Upload failed');
+    setImageUploadProgress(null);
+  }
+};
+
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  try {
+    const res = await axios.post('/api/post/create', formData);
+
+    // Axios automatically parses JSON, no need for res.json()
+    const data = res.data;
+
+    navigate(`/post/${data.slug}`);
+  } catch (error: any) {
+    if (error.response && error.response.data?.message) {
+      setPublishError(error.response.data.message);
+    } else {
       setPublishError('Something went wrong');
     }
-  };
+  }
+};
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
@@ -64,20 +95,23 @@ export default function CreatePost() {
           </Select>
         </div>
 
-        {/* Uploadcare uploader */}
-        <div className='border-4 border-dotted border-teal-500 p-3'>
-          <FileUploaderRegular
-            pubkey='475b04ee15f27e13bd4b'
-            sourceList="local, camera, facebook, gdrive"
-            classNameUploader="uc-gray"
-            onChange={(fileInfo: any) => {
-              const cdnUrl = fileInfo?.cdnUrl;
-              if (cdnUrl) {
-                setFormData({ ...formData, image: cdnUrl });
-              }
-            }}
+        {/* Custom Uploadcare image uploader */}
+        <div className='flex gap-4 items-center justify-between border-4 border-dotted border-teal-500 p-3'>
+          <FileInput
+            accept='image/*'
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
           />
+          <Button
+            type='button'
+            onClick={handleUploadImage}
+            disabled={!!imageUploadProgress}
+            className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'
+          >
+            {imageUploadProgress ? 'Uploading...' : 'Upload Image'}
+          </Button>
         </div>
+
+        {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
 
         {formData.image && (
           <img
