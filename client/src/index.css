@@ -47,4 +47,40 @@ select {
   transition-duration: 300ms;
 }
 
+/* ReactQuill editor dark/light mode using your CSS variables */
+.ql-container {
+  background-color: hsl(var(--color-input-bg)) !important;
+  color: hsl(var(--color-text-primary)) !important;
+  border: 1px solid hsl(var(--color-placeholder)) !important;
+}
 
+.ql-toolbar {
+  background-color: hsl(var(--color-bg-primary)) !important;
+  border: 1px solid hsl(var(--color-placeholder)) !important;
+}
+
+.ql-editor {
+  background-color: hsl(var(--color-input-bg)) !important;
+  color: hsl(var(--color-text-primary)) !important;
+  min-height: 15rem; /* same as h-72 */
+}
+
+.ql-editor::placeholder {
+  color: hsl(var(--color-placeholder)) !important;
+}
+
+.ql-picker,
+.ql-stroke,
+.ql-fill {
+  color: hsl(var(--color-text-primary)) !important;
+  stroke: hsl(var(--color-text-primary)) !important;
+  fill: hsl(var(--color-text-primary)) !important;
+}
+
+.ql-editor.ql-blank::before {
+  content: attr(data-placeholder);
+  color: hsl(var(--color-placeholder)) !important;
+  font-style: italic;
+  pointer-events: none;
+  position: absolute;
+}

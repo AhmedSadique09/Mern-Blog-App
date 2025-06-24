@@ -86,6 +86,7 @@ const handleUploadImage = async () => {
           />
           <Select
             required
+            className='w-[150px] rounded-md text-sm text-gray-900 dark:text-white'
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
           >
             <option value='uncategorized'>Select a category</option>
@@ -96,7 +97,7 @@ const handleUploadImage = async () => {
         </div>
 
         {/* Custom Uploadcare image uploader */}
-        <div className='flex gap-4 items-center justify-between border-4 border-dotted border-teal-500 p-3'>
+        <div className='flex gap-4 items-center justify-between p-3'>
           <FileInput
             accept='image/*'
             onChange={(e) => setFile(e.target.files?.[0] || null)}
@@ -121,12 +122,12 @@ const handleUploadImage = async () => {
           />
         )}
 
-        <ReactQuill
-          theme='snow'
-          placeholder='Write something...'
-          className='h-72 mb-12'
-          onChange={(value) => setFormData({ ...formData, content: value })}
-        />
+   <ReactQuill
+  theme="snow"
+  placeholder="Write something..."
+  className="h-72 mb-12 transition-colors"
+/>
+
 
         <Button
           type='submit'
