@@ -16,6 +16,8 @@ export default function DashSidebar({
   const location = useLocation();
   const dispatch = useDispatch();
   const [tab, setTab] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -23,6 +25,15 @@ export default function DashSidebar({
     if (tabFromUrl) {
       setTab(tabFromUrl);
     }
+
+    // Detect mobile screen
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [location.search]);
 
   const handleSignout = async () => {
@@ -34,15 +45,25 @@ export default function DashSidebar({
     }
   };
 
+  const handleMouseEnter = () => {
+    if (!isMobile) setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) setIsHovered(false);
+  };
+
+  const showFullSidebar = isMobile ? isOpen : isHovered;
+
   return (
     <>
-      {/* Hamburger toggle button — only on small screens */}
+      {/* Hamburger Toggle - Mobile Only (with z-50 fix) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`
-          fixed top-20 left-4 z-50 p-2 rounded-md bg-white dark:bg-gray-900 border
+          fixed top-20 left-4 p-2 z-40 md:hidden
+          rounded-md bg-white dark:bg-gray-900 border
           hover:bg-gray-100 dark:hover:bg-gray-800 shadow-md transition-all
-          ${isOpen ? "ml-64" : "ml-0"} md:hidden
         `}
         title={isOpen ? "Close Sidebar" : "Open Sidebar"}
       >
@@ -53,19 +74,20 @@ export default function DashSidebar({
         </div>
       </button>
 
-      {/* Sidebar itself */}
+      {/* Sidebar */}
       <aside
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         className={`
-          fixed top-0 left-0 z-40 h-screen mt-15.5 w-64 bg-primary text-primary
+          relative top-0 left-0 z-30 h-screen bg-primary text-primary
           border-r border-gray-300 dark:border-gray-700 shadow-md
-          transition-transform duration-300 ease-in-out
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0
+          transition-all duration-300 ease-in-out
+          ${isMobile && !isOpen ? "-translate-x-full" : "translate-x-1"}
+          ${!isMobile ? (isHovered ? "md:w-64" : "md:w-16") : "w-64"}
         `}
       >
-        {/* Sidebar content */}
-        {isOpen && (
-          <nav className="flex flex-col gap-3 px-5 pt-20">
+        {showFullSidebar ? (
+          <nav className="flex flex-col gap-3 px-5 pt-18">
             <Link to="/dashboard?tab=profile">
               <div
                 className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer group transition-all duration-200 ${
@@ -86,6 +108,22 @@ export default function DashSidebar({
               <HiArrowSmRight className="text-lg group-hover:scale-105 transition-transform" />
               <span className="text-[15px]">Sign Out</span>
             </div>
+          </nav>
+        ) : (
+          <nav className="flex flex-col gap-5 items-center pt-20 text-xl text-primary">
+            <Link to="/dashboard?tab=profile">
+              <HiUser
+                title="Profile"
+                className={`cursor-pointer hover:text-black dark:hover:text-white ${
+                  tab === "profile" ? "text-black dark:text-white" : ""
+                }`}
+              />
+            </Link>
+            <HiArrowSmRight
+              title="Sign Out"
+              onClick={handleSignout}
+              className="cursor-pointer hover:text-red-600 dark:hover:text-red-300"
+            />
           </nav>
         )}
       </aside>

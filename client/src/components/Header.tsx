@@ -59,7 +59,7 @@ export default function Header() {
   };
 
   return (
-    <div className="sticky top-0 left-0 z-50 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-zinc-800/60 transition-all duration-300">
+    <div className="sticky top-0 left-0 z-50 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-zinc-700/30 transition-all duration-300">
       <Navbar className="!bg-transparent shadow-none text-primary transition-all duration-300">
         {/* 🌟 Logo */}
         <Link
