@@ -1,26 +1,32 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import DashSidebar from '../components/DashSidebar';
-import DashProfile from '../components/DashProfile';
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import DashSidebar from "../components/DashSidebar";
+import DashProfile from "../components/DashProfile";
+
 
 export default function Dashboard() {
   const location = useLocation();
-  const [tab, setTab] = useState('');
+  const [tab, setTab] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(true); // <-- start as true for desktop
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const tabFromUrl = urlParams.get('tab');
+    const tabFromUrl = urlParams.get("tab");
     if (tabFromUrl) {
       setTab(tabFromUrl);
     }
   }, [location.search]);
 
   return (
-    <div className='min-h-screen flex flex-col md:flex-row bg-primary text-primary transition-colors'>
-      <div className='md:w-56'>
-        <DashSidebar />
+    <div className="min-h-screen flex bg-primary text-primary transition-colors">
+
+      {/* Sidebar */}
+      <DashSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+
+      {/* Main content */}
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-0"}`}>
+        {tab === "profile" && <DashProfile />}
       </div>
-      {tab === 'profile' && <DashProfile />}
     </div>
   );
 }
