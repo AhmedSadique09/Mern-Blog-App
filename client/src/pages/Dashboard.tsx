@@ -23,8 +23,8 @@ export default function Dashboard() {
       {/* Sidebar */}
       <DashSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
-      {/* Main content */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-0"}`}>
+      {/* profile */}
+      <div className={`flex-1 transition-all duration-300  ${sidebarOpen ? "ml-64" : "ml-0"}`}>
         {tab === "profile" && <DashProfile />}
       </div>
     </div>
