@@ -23,7 +23,6 @@ export default function DashSidebar({
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.user.currentUser);
   const [tab, setTab] = useState("");
-  const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -33,7 +32,6 @@ export default function DashSidebar({
       setTab(tabFromUrl);
     }
 
-    // Detect mobile screen
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -54,15 +52,7 @@ export default function DashSidebar({
     }
   };
 
-  const handleMouseEnter = () => {
-    if (!isMobile) setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    if (!isMobile) setIsHovered(false);
-  };
-
-  const showFullSidebar = isMobile ? isOpen : isHovered;
+  const showFullSidebar = isMobile ? isOpen : true;
 
   return (
     <>
@@ -81,43 +71,37 @@ export default function DashSidebar({
 
       {/* Sidebar Container */}
       <aside
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
         className={`
           ${
             isMobile
               ? `relative h-screen z-0 bg-primary text-primary transition-all duration-300 ${
                   isOpen ? "translate-x-0" : "-translate-x-full"
                 }`
-              : `relative h-screen z-0 bg-primary text-primary transition-all duration-300 ${
-                  isHovered ? "md:w-64" : "md:w-16"
-                }`
+              : "w-64 h-screen bg-primary text-primary"
           }
           border-r border-b border-gray-300 dark:border-gray-700 shadow-md
         `}
       >
         <nav
           className={`flex flex-col ${
-            showFullSidebar
-              ? "gap-3 px-5 pt-16"
-              : "gap-5 items-center pt-20 text-xl"
+            showFullSidebar ? "gap-3 px-5 pt-16" : "gap-5 items-center pt-20 text-xl"
           }`}
         >
           <Link to="/dashboard?tab=profile">
             <div
               className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer group transition-all duration-200 ${
                 tab === "profile"
-                  ? "bg-gray-200 dark:bg-gray-800 text-black dark:text-white font-semibold shadow-sm"
+                  ? "bg-gray-800 text-white font-semibold shadow-sm"
                   : "hover:bg-gray-100 dark:hover:bg-gray-800 text-primary hover:text-black dark:hover:text-white"
               }`}
             >
-              <HiUser className="text-lg group-hover:scale-105 transition-transform text-primary" />
+              <HiUser className="text-lg group-hover:scale-105 transition-transform" />
               {showFullSidebar && (
                 <span className="text-[15px] flex gap-5">
                   Profile
-                  <strong className="bg-gray-700 rounded-md px-1 text-[14px]">
-                    {currentUser?.isAdmin ? "Admin" : "User"}
-                  </strong>
+                  <strong className="bg-gray-700 rounded-md px-1 text-[14px] text-white">
+  {currentUser?.isAdmin ? "Admin" : "User"}
+</strong>
                 </span>
               )}
             </div>
@@ -129,11 +113,11 @@ export default function DashSidebar({
                 <div
                   className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer group transition-all duration-200 ${
                     tab === "posts"
-                      ? "bg-gray-200 dark:bg-gray-800 font-semibold shadow-sm"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                  } text-primary`}
+                      ? "bg-gray-800 text-white font-semibold shadow-sm"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-800 text-primary hover:text-black dark:hover:text-white"
+                  }`}
                 >
-                  <HiDocumentText className="text-lg group-hover:scale-105 transition-transform text-primary" />
+                  <HiDocumentText className="text-lg group-hover:scale-105 transition-transform" />
                   {showFullSidebar && (
                     <span className="text-[15px]">Posts</span>
                   )}
@@ -143,11 +127,11 @@ export default function DashSidebar({
                 <div
                   className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer group transition-all duration-200 ${
                     tab === "users"
-                      ? "bg-gray-200 dark:bg-gray-800 font-semibold shadow-sm"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                  } text-primary`}
+                      ? "bg-gray-800 text-white font-semibold shadow-sm"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-800 text-primary hover:text-black dark:hover:text-white"
+                  }`}
                 >
-                  <HiOutlineUserGroup className="text-lg group-hover:scale-105 transition-transform text-primary" />
+                  <HiOutlineUserGroup className="text-lg group-hover:scale-105 transition-transform" />
                   {showFullSidebar && (
                     <span className="text-[15px]">Users</span>
                   )}
@@ -157,11 +141,11 @@ export default function DashSidebar({
                 <div
                   className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer group transition-all duration-200 ${
                     tab === "comments"
-                      ? "bg-gray-200 dark:bg-gray-800 font-semibold shadow-sm"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                  } text-primary`}
+                      ? "bg-gray-800 text-white font-semibold shadow-sm"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-800 text-primary hover:text-black dark:hover:text-white"
+                  }`}
                 >
-                  <HiAnnotation className="text-lg group-hover:scale-105 transition-transform text-primary" />
+                  <HiAnnotation className="text-lg group-hover:scale-105 transition-transform" />
                   {showFullSidebar && (
                     <span className="text-[15px]">Comments</span>
                   )}

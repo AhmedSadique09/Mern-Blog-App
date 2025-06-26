@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DashSidebar from "../components/DashSidebar";
 import DashProfile from "../components/DashProfile";
+import DashPost from "../components/DashPost";
 
 
 export default function Dashboard() {
@@ -26,6 +27,8 @@ export default function Dashboard() {
       {/* profile */}
       <div className={`flex-1 transition-all duration-300  ${sidebarOpen ? "ml-64" : "ml-0"}`}>
         {tab === "profile" && <DashProfile />}
+         {/* posts... */}
+      {tab === 'posts' && <DashPost />}
       </div>
     </div>
   );

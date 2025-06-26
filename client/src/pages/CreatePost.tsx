@@ -16,61 +16,76 @@ export default function CreatePost() {
     content?: string;
   }>({});
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [publishSuccess, setPublishSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
 
-const handleUploadImage = async () => {
-  if (!file) {
-    setImageUploadError('Please select an image');
-    return;
-  }
+  const handleUploadImage = async () => {
+    if (!file) {
+      setImageUploadError('Please select an image');
+      return;
+    }
 
-  setImageUploadError(null);
-  const form = new FormData();
-  form.append('file', file);
-  form.append('UPLOADCARE_STORE', '1');
-  form.append('UPLOADCARE_PUB_KEY', '475b04ee15f27e13bd4b');
+    setImageUploadError(null);
+    const form = new FormData();
+    form.append('file', file);
+    form.append('UPLOADCARE_STORE', '1');
+    form.append('UPLOADCARE_PUB_KEY', '475b04ee15f27e13bd4b');
 
-  try {
-    setImageUploadProgress(1);
-    const res = await fetch('https://upload.uploadcare.com/base/', {
-      method: 'POST',
-      body: form,
-    });
+    try {
+      setImageUploadProgress(1);
+      const res = await fetch('https://upload.uploadcare.com/base/', {
+        method: 'POST',
+        body: form,
+      });
 
-    const data = await res.json();
-    if (data && data.file) {
-      const imageUrl = `https://ucarecdn.com/${data.file}/`;
-      setFormData({ ...formData, image: imageUrl });
-      setImageUploadProgress(null);
-    } else {
+      const data = await res.json();
+      if (data && data.file) {
+        const imageUrl = `https://ucarecdn.com/${data.file}/`;
+        setFormData((prev) => ({ ...prev, image: imageUrl }));
+        setImageUploadProgress(null);
+      } else {
+        setImageUploadError('Upload failed');
+        setImageUploadProgress(null);
+      }
+    } catch (error) {
+      console.error(error);
       setImageUploadError('Upload failed');
       setImageUploadProgress(null);
     }
-  } catch (error) {
-    console.error(error);
-    setImageUploadError('Upload failed');
-    setImageUploadProgress(null);
-  }
-};
-
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
+
+  if (!formData.title || !formData.category || !formData.image || !formData.content) {
+    setPublishError('Please provide all required fields');
+    return;
+  }
+
   try {
     const res = await axios.post('/api/post/create', formData);
-
-    // Axios automatically parses JSON, no need for res.json()
     const data = res.data;
 
-    navigate(`/post/${data.slug}`);
+    setPublishError(null);
+    setPublishSuccess('Post created successfully ✅');
+
+    // Optional: reset form
+    setFormData({});
+    setFile(null);
+
+    // Wait 2 seconds then redirect
+    setTimeout(() => {
+      navigate('/dashboard?tab=posts');
+    }, 2000);
   } catch (error: any) {
-    if (error.response && error.response.data?.message) {
+    if (error.response?.data?.message) {
       setPublishError(error.response.data.message);
     } else {
       setPublishError('Something went wrong');
     }
   }
 };
+
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
@@ -81,22 +96,23 @@ const handleUploadImage = async () => {
             type='text'
             placeholder='Title'
             required
+            value={formData.title || ''}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             className='flex-1'
           />
           <Select
             required
             className='w-[150px] rounded-md text-sm text-gray-900 dark:text-white'
+            value={formData.category || ''}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
           >
-            <option value='uncategorized'>Select a category</option>
+            <option value=''>Select a category</option>
             <option value='javascript'>JavaScript</option>
             <option value='reactjs'>React.js</option>
             <option value='nextjs'>Next.js</option>
           </Select>
         </div>
 
-        {/* Custom Uploadcare image uploader */}
         <div className='flex gap-4 items-center justify-between p-3'>
           <FileInput
             accept='image/*'
@@ -122,12 +138,13 @@ const handleUploadImage = async () => {
           />
         )}
 
-   <ReactQuill
-  theme="snow"
-  placeholder="Write something..."
-  className="h-72 mb-12 transition-colors"
-/>
-
+        <ReactQuill
+          theme="snow"
+          placeholder="Write something..."
+          className="h-72 mb-12 transition-colors"
+          value={formData.content || ''}
+          onChange={(value) => setFormData({ ...formData, content: value })}
+        />
 
         <Button
           type='submit'
@@ -137,6 +154,7 @@ const handleUploadImage = async () => {
         </Button>
 
         {publishError && <Alert color='failure'>{publishError}</Alert>}
+        {publishSuccess && <Alert color='success'>{publishSuccess}</Alert>}
       </form>
     </div>
   );
