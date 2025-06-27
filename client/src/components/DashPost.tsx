@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import axios from 'axios';
 
 interface RootState {
   user: {
@@ -40,46 +41,26 @@ export default function DashPosts() {
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState<string>('');
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
-        const data = await res.json();
-        if (res.ok) {
-          setUserPosts(data.posts);
-          if (data.posts.length < 9) {
-            setShowMore(false);
-          }
-        }
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.log(error.message);
-        } else {
-          console.log('Unknown error:', error);
-        }
-      }
-    };
-
-    if (currentUser?.isAdmin) {
-      fetchPosts();
-    }
-  }, [currentUser._id]);
-
-  const handleShowMore = async () => {
-    const startIndex = userPosts.length;
+ useEffect(() => {
+  const fetchPosts = async () => {
     try {
-      const res = await fetch(
-        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setUserPosts((prev) => [...prev, ...data.posts]);
-        if (data.posts.length < 9) {
-          setShowMore(false);
-        }
+      const token = localStorage.getItem('token'); // Replace with Redux if needed
+      const res = await axios.get(`/api/post/getposts?userId=${currentUser._id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = res.data;
+      setUserPosts(data.posts);
+
+      if (data.posts.length < 9) {
+        setShowMore(false);
       }
     } catch (error: unknown) {
-      if (error instanceof Error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data?.message || error.message);
+      } else if (error instanceof Error) {
         console.log(error.message);
       } else {
         console.log('Unknown error:', error);
@@ -87,29 +68,70 @@ export default function DashPosts() {
     }
   };
 
-  const handleDeletePost = async () => {
-    setShowModal(false);
-    try {
-      const res = await fetch(
-        `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
-        {
-          method: 'DELETE',
-        }
-      );
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message);
-      } else {
-        setUserPosts((prev) => prev.filter((post) => post._id !== postIdToDelete));
+  if (currentUser?.isAdmin) {
+    fetchPosts();
+  }
+}, [currentUser._id]);
+
+// 👇 Load more posts
+const handleShowMore = async () => {
+  const startIndex = userPosts.length;
+  try {
+    const token = localStorage.getItem('token');
+    const res = await axios.get(
+      `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.log(error.message);
-      } else {
-        console.log('Unknown error:', error);
-      }
+    );
+
+    const data = res.data;
+    setUserPosts((prev) => [...prev, ...data.posts]);
+
+    if (data.posts.length < 9) {
+      setShowMore(false);
     }
-  };
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.log(error.response?.data?.message || error.message);
+    } else if (error instanceof Error) {
+      console.log(error.message);
+    } else {
+      console.log('Unknown error:', error);
+    }
+  }
+};
+
+// 👇 Delete a post
+const handleDeletePost = async () => {
+  setShowModal(false);
+  try {
+    const token = localStorage.getItem('token');
+    const res = await axios.delete(
+      `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setUserPosts((prev) =>
+      prev.filter((post) => post._id !== postIdToDelete)
+    );
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.log(error.response?.data?.message || error.message);
+    } else if (error instanceof Error) {
+      console.log(error.message);
+    } else {
+      console.log('Unknown error:', error);
+    }
+  }
+};
+
 
   return (
    <div className="pt-3 pr-20 md:mx-auto">
