@@ -4,7 +4,7 @@ import { FaGithub, FaFacebook, FaInstagram } from "react-icons/fa";
 
 export default function FooterComp() {
   return (
-    <Footer container className="border-t-8 border-teal-500 mt-10 px-4 py-6 bg-primary text-primary transition-colors duration-300 border-b">
+    <Footer container className="border-t-8 border-teal-500  px-4 py-6 bg-primary text-primary transition-colors duration-300 border-b">
       <div className="w-full max-w-screen-xl mx-auto">
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-8">
           <div className="text-center md:text-left">

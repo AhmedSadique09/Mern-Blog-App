@@ -112,15 +112,15 @@ export default function DashPosts() {
   };
 
   return (
-   <div className="p-3 md:mx-auto">
+   <div className="pt-3 pr-20 md:mx-auto">
   {currentUser.isAdmin && userPosts.length > 0 ? (
     <>
-      <div className="overflow-x-auto rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+      <div className="w-full max-w-6xl overflow-x-auto rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
         <Table
           hoverable
           className="min-w-[600px] rounded-lg border-spacing-0"
         >
-          <TableHead className="min-w-[600px] rounded-lg shadow-lg">
+          <TableHead className="min-w-[600px] rounded-lg border-spacing-0">
             <TableHeadCell>Date updated</TableHeadCell>
             <TableHeadCell>Post image</TableHeadCell>
             <TableHeadCell>Post title</TableHeadCell>
@@ -168,7 +168,7 @@ export default function DashPosts() {
                 </TableCell>
                 <TableCell>
                   <Link
-                    className="text-teal-500 hover:underline"
+                    className="text-green-600 hover:underline"
                     to={`/update-post/${post._id}`}
                   >
                     <span>Edit</span>
@@ -183,7 +183,7 @@ export default function DashPosts() {
       {showMore && (
         <button
           onClick={handleShowMore}
-          className="w-full text-teal-500 self-center text-sm py-7"
+          className="w-full text-emerald-600 self-center text-sm py-7"
         >
           Show more
         </button>
