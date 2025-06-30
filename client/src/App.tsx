@@ -12,11 +12,14 @@ import AdminPrivateRoute from "./components/AdminPrivateRoute";
 import CreatePost from "./pages/CreatePost";
 import NotFound from "./pages/notFound";
 import UpdatePost from "./pages/UpdatePost";
+import PostPage from "./pages/PostPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 
 export default function App() {
   return (
     <BrowserRouter>
+    <ScrollToTop/>
     <Header/>
       <Routes>
         {/*routes*/}
@@ -25,6 +28,7 @@ export default function App() {
         <Route path="/signup" element={<Signup/>} />
         <Route path="/signin" element={<Signin/>} />
         <Route path="/projects" element={<Projects/>} />
+        <Route path="/post/:postSlug" element={<PostPage/>} />
         <Route path="/notFound" element={<NotFound />} />
         <Route element={<PrivateRoute />}>
         <Route path="/dashboard" element={<Dashboard/>} />

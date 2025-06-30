@@ -6,6 +6,7 @@ import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoute.js';
 import postRoutes from './routes/postRoute.js';
+import commentRoute from './routes/commentRoute.js';
 import cookieParser from 'cookie-parser';
 
 mongoose.connect(process.env.MONGO)
@@ -28,6 +29,7 @@ app.listen(3000, () => {
 app.use('/api/user', userRoutes);
 app.use('/api/auth',authRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/comment', commentRoute);
 
 app.use((err,req,res,next) =>{
   const statusCode = err.statusCode || 500;

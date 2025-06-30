@@ -12,7 +12,7 @@ import {
 } from 'flowbite-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import axios from 'axios';
 import { FaCheck, FaTimes } from 'react-icons/fa';
