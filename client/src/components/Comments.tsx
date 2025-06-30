@@ -32,12 +32,47 @@ export default function Comment({ comment, onLike, onEdit, onDelete }: CommentPr
   const { currentUser } = useSelector((state: any) => state.user);
 
   useEffect(() => {
-  const getUser = async () => {
+    const getUser = async () => {
+      try {
+        const res = await axios.get(`/api/user/${comment.userId}`, {
+          withCredentials: true, // only needed if using cookies/session
+        });
+        setUser(res.data);
+      } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.data?.message || error.message);
+        } else {
+          console.log('An unexpected error occurred.');
+        }
+      }
+    };
+    getUser();
+  }, [comment]);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setEditedContent(comment.content);
+  };
+
+  const handleSave = async () => {
     try {
-      const res = await axios.get(`/api/user/${comment.userId}`, {
-        withCredentials: true, // only needed if using cookies/session
-      });
-      setUser(res.data);
+      const res = await axios.put(
+        `/api/comment/editComment/${comment._id}`,
+        {
+          content: editedContent,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true, // only if your backend uses cookies
+        }
+      );
+
+      if (res.status === 200) {
+        setIsEditing(false);
+        onEdit(comment, editedContent);
+      }
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data?.message || error.message);
@@ -46,41 +81,6 @@ export default function Comment({ comment, onLike, onEdit, onDelete }: CommentPr
       }
     }
   };
-  getUser();
-}, [comment]);
-
-  const handleEdit = () => {
-    setIsEditing(true);
-    setEditedContent(comment.content);
-  };
-
-  const handleSave = async () => {
-  try {
-    const res = await axios.put(
-      `/api/comment/editComment/${comment._id}`,
-      {
-        content: editedContent,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true, // only if your backend uses cookies
-      }
-    );
-
-    if (res.status === 200) {
-      setIsEditing(false);
-      onEdit(comment, editedContent);
-    }
-  } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      console.log(error.response?.data?.message || error.message);
-    } else {
-      console.log('An unexpected error occurred.');
-    }
-  }
-};
 
   return (
     <div className='flex p-4 border-b dark:border-gray-600 text-sm'>
@@ -134,19 +134,18 @@ export default function Comment({ comment, onLike, onEdit, onDelete }: CommentPr
               <button
                 type='button'
                 onClick={() => onLike(comment._id)}
-                className={`text-gray-400 hover:text-blue-500 ${
-                  currentUser &&
+                className={`text-gray-400 hover:text-blue-500 ${currentUser &&
                   comment.likes.includes(currentUser._id) &&
                   '!text-blue-500'
-                }`}
+                  }`}
               >
                 <FaThumbsUp className='text-sm' />
               </button>
               <p className='text-gray-400'>
                 {comment.numberOfLikes > 0 &&
                   comment.numberOfLikes +
-                    ' ' +
-                    (comment.numberOfLikes === 1 ? 'like' : 'likes')}
+                  ' ' +
+                  (comment.numberOfLikes === 1 ? 'like' : 'likes')}
               </p>
               {currentUser &&
                 (currentUser._id === comment.userId || currentUser.isAdmin) && (

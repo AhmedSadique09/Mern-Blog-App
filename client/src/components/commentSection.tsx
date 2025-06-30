@@ -36,7 +36,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     }
     try {
       const res = await axios.post(
-        'http://localhost:3000/api/comment/create',
+        '/api/comment/create',
         {
           content: comment,
           postId,
@@ -65,7 +65,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     const getComments = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/comment/getPostComments/${postId}`,
+          `/api/comment/getPostComments/${postId}`,
           {
             withCredentials: true,
           }
@@ -89,7 +89,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
         return;
       }
       const res = await axios.put(
-        `http://localhost:3000/api/comment/likeComment/${commentId}`,
+        `/api/comment/likeComment/${commentId}`,
         {},
         { withCredentials: true }
       );
@@ -132,7 +132,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
         return;
       }
       await axios.delete(
-        `http://localhost:3000/api/comment/deleteComment/${commentId}`,
+        `/api/comment/deleteComment/${commentId}`,
         {
           withCredentials: true,
         }
@@ -146,7 +146,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       }
     }
   };
-  
+
   return (
     <div className='max-w-3xl mx-auto w-full p-3'>
       {currentUser ? (

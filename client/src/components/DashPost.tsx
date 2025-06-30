@@ -109,7 +109,7 @@ const handleDeletePost = async () => {
   setShowModal(false);
   try {
     const token = localStorage.getItem('token');
-    const res = await axios.delete(
+    await axios.delete(
       `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
       {
         headers: {
