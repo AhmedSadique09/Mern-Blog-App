@@ -2,6 +2,7 @@
 import {
   HiAnnotation,
   HiArrowSmRight,
+  HiChartPie,
   HiDocumentText,
   HiOutlineUserGroup,
   HiUser,
@@ -71,22 +72,38 @@ export default function DashSidebar({
 
       {/* Sidebar Container */}
       <aside
-        className={`
-          ${
-            isMobile
-              ? `relative h-screen z-0 bg-primary text-primary transition-all duration-300 ${
-                  isOpen ? "translate-x-0" : "-translate-x-full"
-                }`
-              : "w-64 h-screen bg-primary text-primary"
-          }
-          border-r border-b border-gray-300 dark:border-gray-700 shadow-md
-        `}
+        className={`${
+          isMobile
+            ? `relative h-screen z-0 bg-primary text-primary transition-all duration-300 ${
+                isOpen ? "translate-x-0" : "-translate-x-full"
+              }`
+            : "w-64 h-screen bg-primary text-primary"
+        } border-r border-b border-gray-300 dark:border-gray-700 shadow-md`}
       >
         <nav
           className={`flex flex-col ${
-            showFullSidebar ? "gap-3 px-5 pt-16" : "gap-5 items-center pt-20 text-xl"
+            showFullSidebar
+              ? "gap-3 px-5 pt-16"
+              : "gap-5 items-center pt-20 text-xl"
           }`}
         >
+          {/* Dashboard Tab */}
+          <Link to="/dashboard?tab=dashboard">
+  <div
+    className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer group transition-all duration-200 ${
+      tab === "Dashcomp"
+        ? "bg-gray-800 text-white font-semibold shadow-sm"
+        : "hover:bg-gray-100 dark:hover:bg-gray-800 text-primary hover:text-black dark:hover:text-white"
+    }`}
+  >
+    <HiChartPie className="text-lg group-hover:scale-105 transition-transform" />
+    {showFullSidebar && (
+      <span className="text-[15px]">Dashboard</span>
+    )}
+  </div>
+</Link>
+
+          {/* Profile Tab */}
           <Link to="/dashboard?tab=profile">
             <div
               className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer group transition-all duration-200 ${
@@ -100,13 +117,14 @@ export default function DashSidebar({
                 <span className="text-[15px] flex gap-5">
                   Profile
                   <strong className="bg-gray-700 rounded-md px-1 text-[14px] text-white">
-  {currentUser?.isAdmin ? "Admin" : "User"}
-</strong>
+                    {currentUser?.isAdmin ? "Admin" : "User"}
+                  </strong>
                 </span>
               )}
             </div>
           </Link>
 
+          {/* Admin Tabs */}
           {currentUser?.isAdmin && (
             <>
               <Link to="/dashboard?tab=posts">
@@ -154,12 +172,15 @@ export default function DashSidebar({
             </>
           )}
 
+          {/* Sign Out */}
           <div
             className="flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer group transition-all duration-200 hover:bg-red-100 dark:hover:bg-red-900 text-primary hover:text-red-600 dark:hover:text-red-300"
             onClick={handleSignout}
           >
             <HiArrowSmRight className="text-lg group-hover:scale-105 transition-transform" />
-            {showFullSidebar && <span className="text-[15px]">Sign Out</span>}
+            {showFullSidebar && (
+              <span className="text-[15px]">Sign Out</span>
+            )}
           </div>
         </nav>
       </aside>
