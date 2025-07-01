@@ -1,7 +1,6 @@
-import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   signInStart,
   signInSuccess,
@@ -10,6 +9,7 @@ import {
 import { motion } from 'framer-motion';
 import OAuth from '../components/OAuth';
 import axios from 'axios';
+import { useState } from "react";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({ email: '', password: '' });
