@@ -50,6 +50,13 @@ export default function DashUsers() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Redirect non-admins
+    if (!currentUser?.isAdmin) {
+      navigate('/notFound');
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -130,11 +137,9 @@ export default function DashUsers() {
         if (isDeletingSelf) {
           localStorage.removeItem('token');
           document.cookie = 'access_token=; Max-Age=0';
-          navigate('/signup'); // redirect to signup or login
+          navigate('/signup');
         } else {
-          setUsers((prev) =>
-            prev.filter((user) => user._id !== userIdToDelete)
-          );
+          setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
         }
       } else {
         console.log(data.message);
@@ -145,67 +150,98 @@ export default function DashUsers() {
   };
 
   return (
-    <div className="pt-3 pr-20 md:mx-auto">
+    <div className="py-3 px-4 sm:px-8 md:px-20 overflow-x-hidden">
       {currentUser.isAdmin && users.length > 0 ? (
         <>
-          <div className="w-full max-w-6xl overflow-x-auto rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-            <Table
-              hoverable
-              className="min-w-[600px] rounded-lg border-spacing-0"
-            >
-              <TableHead className="min-w-[600px] rounded-lg border-spacing-0">
-                <TableHeadCell>Date created</TableHeadCell>
-                <TableHeadCell>Post image</TableHeadCell>
-                <TableHeadCell>Username</TableHeadCell>
-                <TableHeadCell>Email</TableHeadCell>
-                <TableHeadCell>Admin</TableHeadCell>
-                <TableHeadCell>Delete</TableHeadCell>
-              </TableHead>
+          {/* Desktop Table */}
+          <div className="hidden md:flex justify-center w-full">
+            <div className="w-full max-w-6xl overflow-x-auto rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+              <Table hoverable className="min-w-[600px] rounded-lg border-spacing-0">
+                <TableHead className="min-w-[600px] rounded-lg border-spacing-0">
+                  <TableHeadCell>Date created</TableHeadCell>
+                  <TableHeadCell>Profile picture</TableHeadCell>
+                  <TableHeadCell>Username</TableHeadCell>
+                  <TableHeadCell>Email</TableHeadCell>
+                  <TableHeadCell>Admin</TableHeadCell>
+                  <TableHeadCell>Delete</TableHeadCell>
+                </TableHead>
 
-              {users.map((user) => (
-                <TableBody
-                  key={user._id}
-                  className="divide-y divide-[hsl(var(--color-placeholder))]"
-                >
-                  <TableRow className="!bg-[hsl(var(--color-table-bg))] !text-[hsl(var(--color-table-text))]">
-                    <TableCell>
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <img
-                        src={user.profilePicture}
-                        alt={
-                          typeof user.username === 'string'
-                            ? user.username
-                            : ''
-                        }
-                        className="w-10 h-10 object-cover bg-gray-500 rounded-full"
-                      />
-                    </TableCell>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      {user.isAdmin ? (
-                        <FaCheck className="text-green-500" />
-                      ) : (
-                        <FaTimes className="text-red-500" />
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        onClick={() => {
-                          setShowModal(true);
-                          setUserIdToDelete(user._id);
-                        }}
-                        className="font-medium text-red-500 hover:underline cursor-pointer"
-                      >
-                        Delete
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              ))}
-            </Table>
+                {users.map((user) => (
+                  <TableBody key={user._id} className="divide-y divide-[hsl(var(--color-placeholder))]">
+                    <TableRow className="!bg-[hsl(var(--color-table-bg))] !text-[hsl(var(--color-table-text))]">
+                      <TableCell>
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <img
+                          src={user.profilePicture}
+                          alt={typeof user.username === 'string' ? user.username : ''}
+                          className="w-10 h-10 object-cover bg-gray-500 rounded-full"
+                        />
+                      </TableCell>
+                      <TableCell>{user.username}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        {user.isAdmin ? (
+                          <FaCheck className="text-green-500" />
+                        ) : (
+                          <FaTimes className="text-red-500" />
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          onClick={() => {
+                            setShowModal(true);
+                            setUserIdToDelete(user._id);
+                          }}
+                          className="font-medium text-red-500 hover:underline cursor-pointer"
+                        >
+                          Delete
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                ))}
+              </Table>
+            </div>
+          </div>
+
+          {/* Mobile Card Layout */}
+          <div className="block md:hidden space-y-4 py-15">
+            {users.map((user) => (
+              <div key={user._id} className="border rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-gray-500">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </span>
+                  {user.isAdmin ? (
+                    <FaCheck className="text-green-500 text-sm" />
+                  ) : (
+                    <FaTimes className="text-red-500 text-sm" />
+                  )}
+                </div>
+                <div className="flex gap-4 items-center">
+                  <img
+                    src={user.profilePicture}
+                    alt={typeof user.username === 'string' ? user.username : ''}
+                    className="w-12 h-12 object-cover bg-gray-300 rounded-full"
+                  />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-100">{user.username}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">{user.email}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowModal(true);
+                      setUserIdToDelete(user._id);
+                    }}
+                    className="text-red-500 hover:underline text-sm"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
 
           {showMore && (
@@ -233,8 +269,7 @@ export default function DashUsers() {
             </h3>
             {userIdToDelete === currentUser._id && (
               <p className="text-sm text-red-600 dark:text-red-400 mb-4">
-                This action will sign you out and remove your admin access
-                permanently. Please confirm only if you are absolutely sure.
+                This action will sign you out and remove your admin access permanently. Please confirm only if you are absolutely sure.
               </p>
             )}
             <div className="flex justify-center gap-4 mt-4">

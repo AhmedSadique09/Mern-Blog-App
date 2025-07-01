@@ -28,7 +28,7 @@ export default function Dashboard() {
       <DashSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
       {/* profile */}
-      <div className={`flex-1 transition-all duration-300  ${sidebarOpen ? "ml-64" : "ml-0"}`}>
+      <div className={`flex-1 transition-all duration-300  ${sidebarOpen ? "" : "ml-0"}`}>
         {tab === "profile" && <DashProfile />}
          {/* posts... */}
       {tab === 'posts' && <DashPost />}

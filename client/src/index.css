@@ -1,8 +1,5 @@
-/* src/index.css */
 @import "tailwindcss";
 @import "flowbite";
-
-
 
 /* Light Theme */
 :root {
@@ -15,6 +12,9 @@
   --color-thead-bg: 0 0% 90%;              /* Table header background (light gray) */
   --color-table-text: 0 0% 10%;            /* Table body text color (almost black) */
   --color-hover-bg: 0 0% 97%;              /* Hover row background */
+
+  --color-icon: 0 0% 10%;                  /* Sidebar close icon (black) */
+  --color-icon-hover-bg: 0 0% 90%;         /* Hover background for icon (light gray) */
 }
 
 /* Dark Theme Overrides */
@@ -28,6 +28,9 @@ html.dark {
   --color-thead-bg: 220 20% 20%;           /* Table header (darker gray) */
   --color-table-text: 0 0% 100%;           /* Table text (white) */
   --color-hover-bg: 220 20% 18%;           /* Row hover (slightly lighter dark) */
+
+  --color-icon: 0 0% 100%;                 /* Sidebar close icon (white) */
+  --color-icon-hover-bg: 0 0% 25%;         /* Hover background for icon (dark gray) */
 }
 
 /* -------------------- Utility Classes -------------------- */
@@ -156,8 +159,3 @@ select {
 .dark .post-content a{
   color: red;
 }
-
-
-
-
-

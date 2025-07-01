@@ -14,6 +14,7 @@ import NotFound from "./pages/notFound";
 import UpdatePost from "./pages/UpdatePost";
 import PostPage from "./pages/PostPage";
 import ScrollToTop from "./components/ScrollToTop";
+import Search from "./pages/Search";
 
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/signup" element={<Signup/>} />
         <Route path="/signin" element={<Signin/>} />
+        <Route path='/search' element={<Search />} />
         <Route path="/projects" element={<Projects/>} />
         <Route path="/post/:postSlug" element={<PostPage/>} />
         <Route path="/notFound" element={<NotFound />} />

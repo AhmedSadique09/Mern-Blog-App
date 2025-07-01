@@ -11,7 +11,7 @@ import {
   DropdownItem,
   DropdownDivider,
 } from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,9 +19,8 @@ import { signoutSuccess } from "../redux/user/userSlice";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import axios from "axios";
 import { HiOutlineUserCircle, HiOutlineLogout } from "react-icons/hi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-// ✅ Mobile Slider Component
 function ThemeSlider({ theme, onToggle }: { theme: string; onToggle: () => void }) {
   return (
     <label className="relative inline-flex items-center cursor-pointer">
@@ -39,11 +38,31 @@ function ThemeSlider({ theme, onToggle }: { theme: string; onToggle: () => void 
 
 export default function Header() {
   const path = useLocation().pathname;
+  const location = useLocation();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state: any) => state.user);
   const { theme } = useSelector((state: any) => state.theme);
   const dispatch = useDispatch();
 
-  const [showSearchBar, setShowSearchBar] = useState(false); // 🔍 state
+  const [showSearchBar, setShowSearchBar] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTermFromUrl);
+    }
+  }, [location.search]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("searchTerm", searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+    setShowSearchBar(false);
+  };
 
   const handleSignout = async () => {
     try {
@@ -59,9 +78,8 @@ export default function Header() {
   };
 
   return (
-    <div className="sticky top-0 left-0 z-50 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-zinc-700/30 transition-all duration-300">
+    <div className="sticky top-0 left-0 z-80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-zinc-700/30 transition-all duration-300">
       <Navbar className="!bg-transparent shadow-none text-primary transition-all duration-300">
-        {/* 🌟 Logo */}
         <Link
           to="/"
           className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold"
@@ -72,11 +90,9 @@ export default function Header() {
           Blog
         </Link>
 
-        {/* 🍔 Right controls */}
         <div className="flex items-center gap-2 md:order-2">
           <NavbarToggle />
 
-          {/* 🔍 Search icon for md+ only */}
           <Button
             className="hidden md:flex w-10 h-10 p-2"
             color="gray"
@@ -87,7 +103,6 @@ export default function Header() {
             <AiOutlineSearch className="w-5 h-5" />
           </Button>
 
-          {/* 🌗 Normal theme toggle button (desktop only) */}
           <Button
             className="hidden md:flex w-10 h-10 p-2 rounded-full"
             color="gray"
@@ -101,7 +116,6 @@ export default function Header() {
             )}
           </Button>
 
-          {/* 👤 Auth dropdown */}
           {currentUser ? (
             <Dropdown
               arrowIcon={false}
@@ -158,7 +172,6 @@ export default function Header() {
           )}
         </div>
 
-        {/* 📱 Burger Menu Collapse */}
         <NavbarCollapse>
           <NavbarLink active={path === "/"} as={"div"} className="text-primary">
             <Link to="/">Home</Link>
@@ -172,18 +185,18 @@ export default function Header() {
             <Link to="/projects">Projects</Link>
           </NavbarLink>
 
-          {/* 🔍 Search input mobile */}
-          <form className="block md:hidden w-full mt-3">
+          <form onSubmit={handleSearch} className="block md:hidden w-full mt-3">
             <TextInput
               type="text"
               placeholder="Search..."
               icon={AiOutlineSearch}
               sizing="md"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
             />
           </form>
 
-          {/* 🌗 Slider-based Theme Toggle in mobile */}
           <div className="flex items-center gap-3 mt-4 md:hidden">
             <ThemeSlider theme={theme} onToggle={() => dispatch(toggleTheme())} />
             <span className="text-sm">{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
@@ -191,16 +204,17 @@ export default function Header() {
         </NavbarCollapse>
       </Navbar>
 
-      {/* 🔍 Floating Search Bar for desktop only */}
       {showSearchBar && (
         <div className="hidden md:block absolute top-20 right-4 z-50 w-72 md:w-96">
-          <form className="relative">
+          <form onSubmit={handleSearch} className="relative">
             <TextInput
               type="text"
               placeholder="Search..."
               icon={AiOutlineSearch}
               sizing="md"
               autoFocus
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full rounded-lg shadow-lg focus:ring-indigo-500 focus:border-indigo-500"
             />
             <button
