@@ -3,23 +3,35 @@
 @import "flowbite";
 
 
-/* Light Theme (default) */
+
+/* Light Theme */
 :root {
-  --color-text-primary: 0 0% 10%;       /* Dark text */
-  --color-bg-primary: 0 0% 100%;        /* White background */
-  --color-placeholder: 0 0% 50%;        /* Medium gray placeholder */
-  --color-input-bg: 0 0% 100%;          /* White input background */
+  --color-text-primary: 0 0% 10%;          /* Almost black text */
+  --color-bg-primary: 0 0% 100%;           /* Pure white background */
+  --color-placeholder: 0 0% 60%;           /* Medium gray */
+  --color-input-bg: 0 0% 100%;             /* White input background */
+
+  --color-table-bg: 0 0% 100%;             /* Table body background (white) */
+  --color-thead-bg: 0 0% 90%;              /* Table header background (light gray) */
+  --color-table-text: 0 0% 10%;            /* Table body text color (almost black) */
+  --color-hover-bg: 0 0% 97%;              /* Hover row background */
 }
 
-/* Dark Theme */
+/* Dark Theme Overrides */
 html.dark {
-  --color-text-primary: 0 0% 100%;      /* White text */
-  --color-bg-primary: 220 20% 10%;      /* Very dark bluish-gray */
-  --color-placeholder: 0 0% 80%;        /* Light gray placeholder */
-  --color-input-bg: 220 20% 10%;        /* Match background (dark) */
+  --color-text-primary: 0 0% 100%;         /* White text */
+  --color-bg-primary: 220 20% 10%;         /* Very dark bluish gray */
+  --color-placeholder: 0 0% 80%;           /* Light gray for dark theme */
+  --color-input-bg: 220 20% 10%;           /* Match dark background */
+
+  --color-table-bg: 220 20% 15%;           /* Table body (dark) */
+  --color-thead-bg: 220 20% 20%;           /* Table header (darker gray) */
+  --color-table-text: 0 0% 100%;           /* Table text (white) */
+  --color-hover-bg: 220 20% 18%;           /* Row hover (slightly lighter dark) */
 }
 
-/* Utility classes */
+/* -------------------- Utility Classes -------------------- */
+
 .text-primary {
   color: hsl(var(--color-text-primary)) !important;
 }
@@ -28,13 +40,13 @@ html.dark {
   background-color: hsl(var(--color-bg-primary));
 }
 
-/* Placeholder styling */
-::placeholder {
-  color: hsl(var(--color-placeholder));
-  opacity: 1;
+.transition-colors {
+  transition-property: background-color, color;
+  transition-duration: 300ms;
 }
 
-/* Optional: global input background & text color */
+/* -------------------- Form Controls -------------------- */
+
 input,
 textarea,
 select {
@@ -42,13 +54,48 @@ select {
   color: hsl(var(--color-text-primary));
 }
 
-/* Smooth transition */
-.transition-colors {
-  transition-property: background-color, color;
-  transition-duration: 300ms;
+::placeholder {
+  color: hsl(var(--color-placeholder));
+  opacity: 1;
 }
 
-/* ReactQuill editor dark/light mode using your CSS variables */
+/* -------------------- Table Styling -------------------- */
+@layer components {
+  table {
+    background-color: hsl(var(--color-table-bg)) !important;
+    color: hsl(var(--color-table-text)) !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 2px 8px hsl(0 0% 80% / 0.5); /* light mode shadow */
+    border: none !important;
+    overflow: hidden;
+  }
+
+  thead {
+    background-color: hsl(var(--color-thead-bg)) !important;
+    color: white !important;
+  }
+
+  tbody {
+    color: hsl(var(--color-table-text)) !important;
+  }
+
+  tbody tr {
+    background-color: hsl(var(--color-table-bg)) !important;
+    border-bottom: 1px solid hsl(var(--color-placeholder));
+  }
+
+  tbody tr:hover {
+    background-color: hsl(var(--color-hover-bg)) !important;
+  }
+
+  html.dark table {
+    box-shadow: 0 2px 10px hsl(220 20% 10% / 0.6);
+  }
+}
+
+/* -------------------- ReactQuill Editor -------------------- */
 .ql-container {
   background-color: hsl(var(--color-input-bg)) !important;
   color: hsl(var(--color-text-primary)) !important;
@@ -63,11 +110,13 @@ select {
 .ql-editor {
   background-color: hsl(var(--color-input-bg)) !important;
   color: hsl(var(--color-text-primary)) !important;
-  min-height: 15rem; /* same as h-72 */
+  min-height: 15rem;
 }
 
-.ql-editor::placeholder {
+.ql-editor::placeholder,
+.ql-editor.ql-blank::before {
   color: hsl(var(--color-placeholder)) !important;
+  font-style: italic;
 }
 
 .ql-picker,
@@ -76,74 +125,6 @@ select {
   color: hsl(var(--color-text-primary)) !important;
   stroke: hsl(var(--color-text-primary)) !important;
   fill: hsl(var(--color-text-primary)) !important;
-}
-
-.ql-editor.ql-blank::before {
-  content: attr(data-placeholder);
-  color: hsl(var(--color-placeholder)) !important;
-  font-style: italic;
-  pointer-events: none;
-  position: absolute;
-}
-
-@import "tailwindcss";
-@import "flowbite";
-
-/* Theme variables (you already have) */
-:root {
-  --color-table-bg: 0 0% 100%;           /* White background */
-  --color-thead-bg: 0 0% 88%;            /* Light silver header */
-  --color-table-text: 0 0% 10%;          /* Black text (for tbody) */
-  --color-hover-bg: 0 0% 97%;
-  --color-placeholder: 0 0% 60%;
-}
-
-html.dark {
-  --color-table-bg: 220 20% 15%;
-  --color-thead-bg: 220 20% 20%;
-  --color-table-text: 0 0% 100%;
-  --color-hover-bg: 220 20% 18%;
-}
-
-/* Tailwind layer to apply styling properly */
-@layer components {
-  table {
-    background-color: hsl(var(--color-table-bg)) !important;
-    color: hsl(var(--color-table-text)) !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    border-radius: 0.5rem !important;
-    box-shadow: 0 2px 8px hsl(0 0% 80% / 0.5);
-    border: none !important;
-    overflow: hidden;
-  }
-
-
-  thead {
-    background-color: hsl(var(--color-thead-bg)) !important;
-    color: hsl(var(--color-table-text)) !important;
-    color: white !important; /* white text for header */
-  }
-
-  tbody {
-    color: hsl(var(--color-table-text)) !important; /* black for body */
-  }
-
-  tbody tr {
-    background-color: hsl(var(--color-table-bg)) !important;
-    color: hsl(var(--color-table-text)) !important;
-    border-bottom: 1px solid hsl(var(--color-placeholder));
-
-  }
-
-  tbody tr:hover {
-    background-color: hsl(var(--color-hover-bg)) !important;
-  }
-
-  html.dark table {
-    box-shadow: 0 2px 10px hsl(220 20% 10% / 0.6);
-  }
-  
 }
 
 .post-content p {
@@ -175,3 +156,8 @@ html.dark {
 .dark .post-content a{
   color: red;
 }
+
+
+
+
+

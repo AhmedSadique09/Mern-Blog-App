@@ -88,7 +88,7 @@ export default function DashSidebar({
           }`}
         >
           {/* Dashboard Tab */}
-          <Link to="/dashboard?tab=dashboard">
+          <Link to="/dashboard?tab=dash">
   <div
     className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer group transition-all duration-200 ${
       tab === "Dashcomp"
