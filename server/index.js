@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGO)
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://mern-blog-app-dun-one.vercel.app'],
+  origin: ['http://localhost:5173'],
   credentials: true
 }));
 
