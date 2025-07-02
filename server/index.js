@@ -14,29 +14,33 @@ mongoose.connect(process.env.MONGO)
     .catch(err => console.error('MongoDB connection error:', err));
 
 const app = express();
+
 app.use(cors({
-  origin: 'http://localhost:5173',  // your frontend port
-  credentials: true                 // allow cookies to be sent
+  origin: ['http://localhost:5173', 'https://mern-blog-app-dun-one.vercel.app'],
+  credentials: true
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-});
-
-
+// Routes
 app.use('/api/user', userRoutes);
-app.use('/api/auth',authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoute);
 
-app.use((err,req,res,next) =>{
+// Global error handler
+app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
   res.status(statusCode).json({
-    success:false,
+    success: false,
     statusCode,
     message,
   });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Server is running on port ${PORT}`);
 });
